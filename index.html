@@ -6,26 +6,41 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>クリッカーゲーム</h1>
 
-  <div id="score">0</div>
-  <button id="clickBtn">クリック！</button>
-
-  <h2>アップグレード</h2>
-
-  <div class="upgrade">
-    <button id="upgradeClick">クリックパワー強化（必要: <span id="costClick">10</span>）</button>
-    <div>現在のクリックパワー: <span id="powerClick">1</span></div>
+  <!-- ログイン画面 -->
+  <div id="loginScreen">
+    <h2>ログイン</h2>
+    <input id="username" placeholder="ユーザー名">
+    <input id="password" type="password" placeholder="パスワード">
+    <button id="loginBtn">ログイン</button>
+    <p id="loginError" style="color:red;"></p>
   </div>
 
-  <div class="upgrade">
-    <button id="upgradeAuto">オートクリック強化（必要: <span id="costAuto">50</span>）</button>
-    <div>毎秒の自動生成: <span id="powerAuto">0</span></div>
-  </div>
+  <!-- ゲーム画面 -->
+  <div id="gameScreen" style="display:none;">
+    <h1>クリッカーゲーム</h1>
 
-  <div class="upgrade">
-    <button id="upgradeMulti">倍率アップ（必要: <span id="costMulti">200</span>）</button>
-    <div>現在の倍率: <span id="multi">1</span>x</div>
+    <div id="score">0</div>
+    <button id="clickBtn">クリック！</button>
+
+    <h2>アップグレード</h2>
+
+    <div class="upgrade">
+      <button id="upgradeClick">クリックパワー強化（必要: <span id="costClick">10</span>）</button>
+      <div>現在のクリックパワー: <span id="powerClick">1</span></div>
+    </div>
+
+    <div class="upgrade">
+      <button id="upgradeAuto">オートクリック強化（必要: <span id="costAuto">50</span>）</button>
+      <div>毎秒の自動生成: <span id="powerAuto">0</span></div>
+    </div>
+
+    <div class="upgrade">
+      <button id="upgradeMulti">倍率アップ（必要: <span id="costMulti">200</span>）</button>
+      <div>現在の倍率: <span id="multi">1</span>x</div>
+    </div>
+
+    <button id="logoutBtn">ログアウト</button>
   </div>
 
   <script src="script.js"></script>
