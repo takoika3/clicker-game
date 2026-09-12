@@ -12,6 +12,25 @@ function saveUsers(users) {
 }
 
 // ----------------------
+// ランキング管理
+// ----------------------
+
+function loadRanking() {
+  const data = localStorage.getItem("ranking");
+  return data ? JSON.parse(data) : {};
+}
+
+function saveRanking(ranking) {
+  localStorage.setItem("ranking", JSON.stringify(ranking));
+}
+
+function updateRanking(user, score) {
+  const ranking = loadRanking();
+  ranking[user] = score;
+  saveRanking(ranking);
+}
+
+// ----------------------
 // 新規登録
 // ----------------------
 document.getElementById("signupBtn").addEventListener("click", () => {
@@ -155,6 +174,7 @@ function saveGame() {
   };
 
   localStorage.setItem("save_" + user, JSON.stringify(data));
+  updateRanking(user, score);
 }
 
 setInterval(saveGame, 1000);
@@ -164,6 +184,7 @@ setInterval(saveGame, 1000);
 // ----------------------
 document.getElementById("clickBtn").addEventListener("click", () => {
   score += clickPower * multi;
+  updateRanking(localStorage.getItem("currentUser"), score);
   updateDisplay();
 });
 
@@ -172,6 +193,7 @@ document.getElementById("upgradeClick").addEventListener("click", () => {
     score -= costClick;
     clickPower++;
     costClick = Math.floor(costClick * 1.5);
+    updateRanking(localStorage.getItem("currentUser"), score);
     updateDisplay();
   }
 });
@@ -181,6 +203,7 @@ document.getElementById("upgradeAuto").addEventListener("click", () => {
     score -= costAuto;
     autoPower++;
     costAuto = Math.floor(costAuto * 1.5);
+    updateRanking(localStorage.getItem("currentUser"), score);
     updateDisplay();
   }
 });
@@ -190,6 +213,7 @@ document.getElementById("upgradeMulti").addEventListener("click", () => {
     score -= costMulti;
     multi++;
     costMulti = Math.floor(costMulti * 2);
+    updateRanking(localStorage.getItem("currentUser"), score);
     updateDisplay();
   }
 });
@@ -197,6 +221,7 @@ document.getElementById("upgradeMulti").addEventListener("click", () => {
 // 自動生成
 setInterval(() => {
   score += autoPower * multi;
+  updateRanking(localStorage.getItem("currentUser"), score);
   updateDisplay();
 }, 1000);
 
@@ -210,8 +235,27 @@ function updateDisplay() {
   costClickEl.textContent = costClick;
   costAutoEl.textContent = costAuto;
   costMultiEl.textContent = costMulti;
+
+  showRanking();
 }
 
+// ----------------------
+// ランキング表示
+// ----------------------
+function showRanking() {
+  const ranking = loadRanking();
+  const list = Object.entries(ranking)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10);
+
+  let html = "<ol>";
+  list.forEach(([user, score]) => {
+    html += `<li>${user}: ${score}</li>`;
+  });
+  html += "</ol>";
+
+  document.getElementById("rankingList").innerHTML = html;
+}
 
 // ----------------------
 // ズーム防止（iPad連打対策）
