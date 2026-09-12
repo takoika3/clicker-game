@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Clicker Game</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>クリッカーゲーム</h1>
+
+  <div id="score">0</div>
+  <button id="clickBtn">クリック！</button>
+
+  <h2>アップグレード</h2>
+
+  <div class="upgrade">
+    <button id="upgradeClick">クリックパワー強化（必要: <span id="costClick">10</span>）</button>
+    <div>現在のクリックパワー: <span id="powerClick">1</span></div>
+  </div>
+
+  <div class="upgrade">
+    <button id="upgradeAuto">オートクリック強化（必要: <span id="costAuto">50</span>）</button>
+    <div>毎秒の自動生成: <span id="powerAuto">0</span></div>
+  </div>
+
+  <div class="upgrade">
+    <button id="upgradeMulti">倍率アップ（必要: <span id="costMulti">200</span>）</button>
+    <div>現在の倍率: <span id="multi">1</span>x</div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
