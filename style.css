@@ -1,4 +1,4 @@
-/* ズーム無効化（iPad対策） */
+/* ズーム無効化（iPad連打対策） */
 html, body {
   touch-action: manipulation;
   -webkit-user-select: none;
@@ -7,12 +7,10 @@ html, body {
 }
 
 body {
-  overscroll-behavior: none;
-}
-body {
   font-family: sans-serif;
   text-align: center;
   background: #f0f0f0;
+  overscroll-behavior: none;
 }
 
 #loginScreen, #signupScreen, #gameScreen {
