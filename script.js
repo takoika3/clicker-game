@@ -1,51 +1,98 @@
 // ----------------------
-// ログイン機能
+// アカウント管理
 // ----------------------
 
-function checkLogin() {
-  const savedUser = localStorage.getItem("user");
-  const savedPass = localStorage.getItem("pass");
-
-  if (savedUser && savedPass) {
-    // 自動ログイン
-    showGameScreen();
-  }
+// users = { "username": "password", ... }
+function loadUsers() {
+  const data = localStorage.getItem("users");
+  return data ? JSON.parse(data) : {};
 }
 
-document.getElementById("loginBtn").addEventListener("click", () => {
-  const user = document.getElementById("username").value;
-  const pass = document.getElementById("password").value;
+function saveUsers(users) {
+  localStorage.setItem("users", JSON.stringify(users));
+}
 
-  if (user === "" || pass === "") {
-    document.getElementById("loginError").textContent = "入力してください";
+// ----------------------
+// 新規登録
+// ----------------------
+document.getElementById("signupBtn").addEventListener("click", () => {
+  const user = document.getElementById("newUser").value;
+  const pass = document.getElementById("newPass").value;
+
+  if (!user || !pass) {
+    document.getElementById("signupError").textContent = "入力してください";
     return;
   }
 
-  // 保存（本当に簡易的）
-  localStorage.setItem("user", user);
-  localStorage.setItem("pass", pass);
+  const users = loadUsers();
 
+  if (users[user]) {
+    document.getElementById("signupError").textContent = "そのユーザー名は既に使われています";
+    return;
+  }
+
+  users[user] = pass;
+  saveUsers(users);
+
+  localStorage.setItem("currentUser", user);
   showGameScreen();
 });
 
+// ----------------------
+// ログイン
+// ----------------------
+document.getElementById("loginBtn").addEventListener("click", () => {
+  const user = document.getElementById("loginUser").value;
+  const pass = document.getElementById("loginPass").value;
+
+  const users = loadUsers();
+
+  if (!users[user] || users[user] !== pass) {
+    document.getElementById("loginError").textContent = "ユーザー名またはパスワードが違います";
+    return;
+  }
+
+  localStorage.setItem("currentUser", user);
+  showGameScreen();
+});
+
+// ----------------------
+// 画面切り替え
+// ----------------------
+document.getElementById("gotoLogin").addEventListener("click", () => {
+  signupScreen.style.display = "none";
+  loginScreen.style.display = "block";
+});
+
+document.getElementById("gotoSignup").addEventListener("click", () => {
+  loginScreen.style.display = "none";
+  signupScreen.style.display = "block";
+});
+
 function showGameScreen() {
-  document.getElementById("loginScreen").style.display = "none";
-  document.getElementById("gameScreen").style.display = "block";
+  signupScreen.style.display = "none";
+  loginScreen.style.display = "none";
+  gameScreen.style.display = "block";
 }
 
+// ----------------------
 // ログアウト
+// ----------------------
 document.getElementById("logoutBtn").addEventListener("click", () => {
-  localStorage.removeItem("user");
-  localStorage.removeItem("pass");
+  localStorage.removeItem("currentUser");
   location.reload();
 });
 
-// 起動時にログインチェック
-checkLogin();
+// ----------------------
+// 起動時にログイン状態チェック
+// ----------------------
+if (localStorage.getItem("currentUser")) {
+  showGameScreen();
+}
 
 
 // ----------------------
-// ここから下はゲーム本体
+// ここからゲーム本体
 // ----------------------
 
 let score = 0;
@@ -68,7 +115,10 @@ const costMultiEl = document.getElementById("costMulti");
 
 // セーブ読み込み
 function loadGame() {
-  const data = JSON.parse(localStorage.getItem("clickerSave"));
+  const user = localStorage.getItem("currentUser");
+  if (!user) return;
+
+  const data = JSON.parse(localStorage.getItem("save_" + user));
   if (!data) return;
 
   score = data.score;
@@ -85,6 +135,9 @@ function loadGame() {
 
 // セーブ保存
 function saveGame() {
+  const user = localStorage.getItem("currentUser");
+  if (!user) return;
+
   const data = {
     score,
     clickPower,
@@ -94,7 +147,8 @@ function saveGame() {
     costAuto,
     costMulti
   };
-  localStorage.setItem("clickerSave", JSON.stringify(data));
+
+  localStorage.setItem("save_" + user, JSON.stringify(data));
 }
 
 setInterval(saveGame, 1000);
