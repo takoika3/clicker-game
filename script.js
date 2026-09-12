@@ -213,3 +213,14 @@ function updateDisplay() {
   costAutoEl.textContent = costAuto;
   costMultiEl.textContent = costMulti;
 }
+// ダブルタップズーム防止
+document.addEventListener('touchstart', function(e) {
+  if (e.touches.length > 1) {
+    e.preventDefault();
+  }
+}, { passive: false });
+
+// ピンチズーム防止
+document.addEventListener('gesturestart', function(e) {
+  e.preventDefault();
+});
