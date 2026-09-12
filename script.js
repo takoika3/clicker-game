@@ -113,7 +113,9 @@ const costClickEl = document.getElementById("costClick");
 const costAutoEl = document.getElementById("costAuto");
 const costMultiEl = document.getElementById("costMulti");
 
-// セーブ読み込み
+// ----------------------
+// セーブ読み込み（ユーザーごと）
+// ----------------------
 function loadGame() {
   const user = localStorage.getItem("currentUser");
   if (!user) return;
@@ -133,7 +135,9 @@ function loadGame() {
   updateDisplay();
 }
 
-// セーブ保存
+// ----------------------
+// セーブ保存（ユーザーごと）
+// ----------------------
 function saveGame() {
   const user = localStorage.getItem("currentUser");
   if (!user) return;
@@ -151,9 +155,12 @@ function saveGame() {
   localStorage.setItem("save_" + user, JSON.stringify(data));
 }
 
+// 1秒ごとに自動保存
 setInterval(saveGame, 1000);
 
+// ----------------------
 // ゲーム処理
+// ----------------------
 document.getElementById("clickBtn").addEventListener("click", () => {
   score += clickPower * multi;
   updateDisplay();
@@ -186,11 +193,13 @@ document.getElementById("upgradeMulti").addEventListener("click", () => {
   }
 });
 
+// 自動生成
 setInterval(() => {
   score += autoPower * multi;
   updateDisplay();
 }, 1000);
 
+// 表示更新
 function updateDisplay() {
   scoreEl.textContent = score;
   powerClickEl.textContent = clickPower;
@@ -202,4 +211,5 @@ function updateDisplay() {
   costMultiEl.textContent = costMulti;
 }
 
+// 起動時ロード
 loadGame();
