@@ -32,3 +32,8 @@ button {
 .upgrade {
   margin: 20px;
 }
+
+#rankingList {
+  margin-top: 20px;
+  font-size: 18px;
+}
