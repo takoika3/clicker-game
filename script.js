@@ -36,6 +36,7 @@ document.getElementById("signupBtn").addEventListener("click", () => {
 
   localStorage.setItem("currentUser", user);
   showGameScreen();
+  loadGame(); // ← 新規登録後にロード
 });
 
 // ----------------------
@@ -54,6 +55,7 @@ document.getElementById("loginBtn").addEventListener("click", () => {
 
   localStorage.setItem("currentUser", user);
   showGameScreen();
+  loadGame(); // ← ログイン後にロード
 });
 
 // ----------------------
@@ -88,6 +90,7 @@ document.getElementById("logoutBtn").addEventListener("click", () => {
 // ----------------------
 if (localStorage.getItem("currentUser")) {
   showGameScreen();
+  loadGame(); // ← 起動時にもロード
 }
 
 
@@ -210,6 +213,3 @@ function updateDisplay() {
   costAutoEl.textContent = costAuto;
   costMultiEl.textContent = costMulti;
 }
-
-// 起動時ロード
-loadGame();
