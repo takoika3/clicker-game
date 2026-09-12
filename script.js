@@ -2,7 +2,6 @@
 // アカウント管理
 // ----------------------
 
-// users = { "username": "password", ... }
 function loadUsers() {
   const data = localStorage.getItem("users");
   return data ? JSON.parse(data) : {};
@@ -36,7 +35,7 @@ document.getElementById("signupBtn").addEventListener("click", () => {
 
   localStorage.setItem("currentUser", user);
   showGameScreen();
-  loadGame(); // ← 新規登録後にロード
+  loadGame();
 });
 
 // ----------------------
@@ -55,7 +54,7 @@ document.getElementById("loginBtn").addEventListener("click", () => {
 
   localStorage.setItem("currentUser", user);
   showGameScreen();
-  loadGame(); // ← ログイン後にロード
+  loadGame();
 });
 
 // ----------------------
@@ -86,16 +85,16 @@ document.getElementById("logoutBtn").addEventListener("click", () => {
 });
 
 // ----------------------
-// 起動時にログイン状態チェック
+// 起動時ログインチェック
 // ----------------------
 if (localStorage.getItem("currentUser")) {
   showGameScreen();
-  loadGame(); // ← 起動時にもロード
+  loadGame();
 }
 
 
 // ----------------------
-// ここからゲーム本体
+// ゲーム本体
 // ----------------------
 
 let score = 0;
@@ -158,7 +157,6 @@ function saveGame() {
   localStorage.setItem("save_" + user, JSON.stringify(data));
 }
 
-// 1秒ごとに自動保存
 setInterval(saveGame, 1000);
 
 // ----------------------
@@ -213,14 +211,17 @@ function updateDisplay() {
   costAutoEl.textContent = costAuto;
   costMultiEl.textContent = costMulti;
 }
-// ダブルタップズーム防止
+
+
+// ----------------------
+// ズーム防止（iPad連打対策）
+// ----------------------
 document.addEventListener('touchstart', function(e) {
   if (e.touches.length > 1) {
     e.preventDefault();
   }
 }, { passive: false });
 
-// ピンチズーム防止
 document.addEventListener('gesturestart', function(e) {
   e.preventDefault();
 });
