@@ -1,3 +1,53 @@
+// ----------------------
+// ログイン機能
+// ----------------------
+
+function checkLogin() {
+  const savedUser = localStorage.getItem("user");
+  const savedPass = localStorage.getItem("pass");
+
+  if (savedUser && savedPass) {
+    // 自動ログイン
+    showGameScreen();
+  }
+}
+
+document.getElementById("loginBtn").addEventListener("click", () => {
+  const user = document.getElementById("username").value;
+  const pass = document.getElementById("password").value;
+
+  if (user === "" || pass === "") {
+    document.getElementById("loginError").textContent = "入力してください";
+    return;
+  }
+
+  // 保存（本当に簡易的）
+  localStorage.setItem("user", user);
+  localStorage.setItem("pass", pass);
+
+  showGameScreen();
+});
+
+function showGameScreen() {
+  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("gameScreen").style.display = "block";
+}
+
+// ログアウト
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  localStorage.removeItem("user");
+  localStorage.removeItem("pass");
+  location.reload();
+});
+
+// 起動時にログインチェック
+checkLogin();
+
+
+// ----------------------
+// ここから下はゲーム本体
+// ----------------------
+
 let score = 0;
 let clickPower = 1;
 let autoPower = 0;
@@ -7,7 +57,6 @@ let costClick = 10;
 let costAuto = 50;
 let costMulti = 200;
 
-// HTML要素
 const scoreEl = document.getElementById("score");
 const powerClickEl = document.getElementById("powerClick");
 const powerAutoEl = document.getElementById("powerAuto");
@@ -17,9 +66,7 @@ const costClickEl = document.getElementById("costClick");
 const costAutoEl = document.getElementById("costAuto");
 const costMultiEl = document.getElementById("costMulti");
 
-// ----------------------
-//  セーブデータ読み込み
-// ----------------------
+// セーブ読み込み
 function loadGame() {
   const data = JSON.parse(localStorage.getItem("clickerSave"));
   if (!data) return;
@@ -36,9 +83,7 @@ function loadGame() {
   updateDisplay();
 }
 
-// ----------------------
-//  セーブデータ保存
-// ----------------------
+// セーブ保存
 function saveGame() {
   const data = {
     score,
@@ -52,12 +97,9 @@ function saveGame() {
   localStorage.setItem("clickerSave", JSON.stringify(data));
 }
 
-// 1秒ごとに自動保存
 setInterval(saveGame, 1000);
 
-// ----------------------
-//  ゲーム処理
-// ----------------------
+// ゲーム処理
 document.getElementById("clickBtn").addEventListener("click", () => {
   score += clickPower * multi;
   updateDisplay();
@@ -90,13 +132,11 @@ document.getElementById("upgradeMulti").addEventListener("click", () => {
   }
 });
 
-// 自動生成
 setInterval(() => {
   score += autoPower * multi;
   updateDisplay();
 }, 1000);
 
-// 表示更新
 function updateDisplay() {
   scoreEl.textContent = score;
   powerClickEl.textContent = clickPower;
@@ -108,7 +148,4 @@ function updateDisplay() {
   costMultiEl.textContent = costMulti;
 }
 
-// ----------------------
-//  起動時にロード
-// ----------------------
 loadGame();
