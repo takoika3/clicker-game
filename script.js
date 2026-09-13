@@ -25,6 +25,7 @@ function saveRanking(ranking) {
 }
 
 function updateRanking(user, score) {
+  if (!user) return;
   const ranking = loadRanking();
   ranking[user] = score;
   saveRanking(ranking);
@@ -142,7 +143,10 @@ function loadGame() {
   if (!user) return;
 
   const data = JSON.parse(localStorage.getItem("save_" + user));
-  if (!data) return;
+  if (!data) {
+    updateDisplay();
+    return;
+  }
 
   score = data.score;
   clickPower = data.clickPower;
@@ -256,6 +260,49 @@ function showRanking() {
 
   document.getElementById("rankingList").innerHTML = html;
 }
+
+// ----------------------
+// ガチャ機能（100万ポイント消費）
+// ----------------------
+function pullGacha() {
+  const user = localStorage.getItem("currentUser");
+  if (!user) {
+    document.getElementById("gachaResult").textContent = "ログインしてください";
+    return;
+  }
+
+  if (score < 1000000) {
+    document.getElementById("gachaResult").textContent = "ポイントが足りません！（100万必要）";
+    return;
+  }
+
+  score -= 1000000;
+
+  const roll = Math.random() * 100;
+  let result;
+
+  if (roll < 40) {
+    result = 0.5;   // 40%
+  } else if (roll < 70) {
+    result = 1.1;   // 30%
+  } else if (roll < 90) {
+    result = 1.5;   // 20%
+  } else if (roll < 99) {
+    result = 2;     // 9%
+  } else {
+    result = 10;    // 1%
+  }
+
+  multi = result;
+
+  document.getElementById("gachaResult").textContent =
+    `ガチャ結果：${result}倍！`;
+
+  updateRanking(user, score);
+  updateDisplay();
+}
+
+document.getElementById("gachaBtn").addEventListener("click", pullGacha);
 
 // ----------------------
 // ズーム防止（iPad連打対策）
