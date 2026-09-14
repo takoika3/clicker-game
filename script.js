@@ -316,3 +316,13 @@ document.addEventListener('touchstart', function(e) {
 document.addEventListener('gesturestart', function(e) {
   e.preventDefault();
 });
+// ----------------------
+// スペースキーでクリック
+// ----------------------
+document.addEventListener("keydown", (e) => {
+  if (e.code === "Space") {
+    score += clickPower * multi;
+    updateRanking(localStorage.getItem("currentUser"), score);
+    updateDisplay();
+  }
+});
