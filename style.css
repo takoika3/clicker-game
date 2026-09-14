@@ -7,39 +7,81 @@ html, body {
 }
 
 body {
-  font-family: sans-serif;
+  font-family: 'Segoe UI', sans-serif;
   text-align: center;
-  background: #f0f0f0;
+  background: #000;
+  color: #f5d76e;
   overscroll-behavior: none;
+  padding: 20px;
 }
 
-#loginScreen, #signupScreen, #gameScreen {
-  margin-top: 50px;
+/* タイトル */
+h1, h2 {
+  color: #f5d76e;
+  text-shadow: 0 0 10px #f5d76e;
 }
 
+/* 入力欄 */
 input {
   display: block;
   margin: 10px auto;
-  padding: 10px;
-  width: 200px;
+  padding: 12px;
+  width: 220px;
+  border: 2px solid #f5d76e;
+  background: #111;
+  color: #f5d76e;
+  border-radius: 8px;
 }
 
+/* ボタン（ゴールド） */
 button {
-  padding: 10px 20px;
+  padding: 12px 25px;
   margin: 10px;
+  background: linear-gradient(135deg, #f5d76e, #c9a43b);
+  border: none;
+  border-radius: 10px;
+  color: #000;
+  font-weight: bold;
+  box-shadow: 0 0 10px #f5d76e;
+  transition: 0.2s;
 }
 
-.upgrade {
+button:hover {
+  box-shadow: 0 0 20px #f5d76e;
+  transform: scale(1.05);
+}
+
+/* スコア表示 */
+#score {
+  font-size: 48px;
   margin: 20px;
+  color: #f5d76e;
+  text-shadow: 0 0 15px #f5d76e;
 }
 
-#rankingList {
-  margin-top: 20px;
-  font-size: 18px;
+/* アップグレード枠 */
+.upgrade {
+  margin: 20px auto;
+  padding: 15px;
+  width: 80%;
+  border: 2px solid #f5d76e;
+  border-radius: 10px;
+  background: #111;
+  box-shadow: 0 0 10px #f5d76e;
 }
 
+/* ガチャ結果 */
 #gachaResult {
   margin-top: 10px;
-  font-size: 18px;
+  font-size: 22px;
   font-weight: bold;
+  color: #f5d76e;
+  text-shadow: 0 0 10px #f5d76e;
+}
+
+/* ランキング */
+#rankingList {
+  margin-top: 20px;
+  font-size: 20px;
+  color: #f5d76e;
 }
