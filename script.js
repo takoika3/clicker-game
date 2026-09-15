@@ -213,12 +213,12 @@ function saveGame() {
 setInterval(saveGame, 1000);
 
 // ----------------------
-// フィーバー判定
+// フィーバー判定（500クリック → 30秒）
 // ----------------------
 function checkFever() {
-  if (!feverActive && clickCount >= 300) {
+  if (!feverActive && clickCount >= 500) {
     feverActive = true;
-    feverEndTime = Date.now() + 60000;
+    feverEndTime = Date.now() + 30000; // 30秒
     clickCount = 0;
   }
 
@@ -232,10 +232,10 @@ function checkFever() {
 }
 
 // ----------------------
-// クリック処理
+// クリック処理（自動クリックはカウントしない）
 // ----------------------
 function doClick() {
-  clickCount++;
+  clickCount++;  // 手動クリックのみ
   checkFever();
 
   let totalMulti = multi;
@@ -306,7 +306,7 @@ document.getElementById("upgradeCritMulti").addEventListener("click", () => {
 });
 
 // ----------------------
-// 自動生成
+// 自動生成（フィーバーのカウントには入れない）
 // ----------------------
 setInterval(() => {
   let totalMulti = multi;
@@ -357,7 +357,7 @@ function showRanking() {
 }
 
 // ----------------------
-// ガチャ
+// ガチャ（倍率ガチャのみ）
 // ----------------------
 function pullGacha() {
   const user = localStorage.getItem("currentUser");
