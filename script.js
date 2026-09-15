@@ -282,27 +282,39 @@ function pullGacha() {
   let result;
 
   if (roll < 40) {
-    result = 0.5;   // 40%
+    result = 0.5;
   } else if (roll < 70) {
-    result = 1.1;   // 30%
+    result = 1.1;
   } else if (roll < 90) {
-    result = 1.5;   // 20%
+    result = 1.5;
   } else if (roll < 99) {
-    result = 2;     // 9%
+    result = 2;
   } else {
-    result = 10;    // 1%
+    result = 10;
   }
 
-  multi = result;
+  // 上乗せ方式
+  multi = multi * result;
 
   document.getElementById("gachaResult").textContent =
-    `ガチャ結果：${result}倍！`;
+    `ガチャ結果：${result}倍！（現在の倍率：${multi}倍）`;
 
   updateRanking(user, score);
   updateDisplay();
 }
 
 document.getElementById("gachaBtn").addEventListener("click", pullGacha);
+
+// ----------------------
+// スペースキーで1回だけクリック（長押し対策）
+// ----------------------
+document.addEventListener("keyup", (e) => {
+  if (e.code === "Space") {
+    score += clickPower * multi;
+    updateRanking(localStorage.getItem("currentUser"), score);
+    updateDisplay();
+  }
+});
 
 // ----------------------
 // ズーム防止（iPad連打対策）
@@ -315,14 +327,4 @@ document.addEventListener('touchstart', function(e) {
 
 document.addEventListener('gesturestart', function(e) {
   e.preventDefault();
-});
-// ----------------------
-// スペースキーでクリック
-// ----------------------
-document.addEventListener("keydown", (e) => {
-  if (e.code === "Space") {
-    score += clickPower * multi;
-    updateRanking(localStorage.getItem("currentUser"), score);
-    updateDisplay();
-  }
 });
