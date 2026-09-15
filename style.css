@@ -15,13 +15,11 @@ body {
   padding: 20px;
 }
 
-/* タイトル */
 h1, h2 {
   color: #f5d76e;
   text-shadow: 0 0 10px #f5d76e;
 }
 
-/* 入力欄 */
 input {
   display: block;
   margin: 10px auto;
@@ -33,7 +31,6 @@ input {
   border-radius: 8px;
 }
 
-/* ボタン（ゴールド） */
 button {
   padding: 12px 25px;
   margin: 10px;
@@ -51,7 +48,6 @@ button:hover {
   transform: scale(1.05);
 }
 
-/* スコア表示 */
 #score {
   font-size: 48px;
   margin: 20px;
@@ -59,7 +55,6 @@ button:hover {
   text-shadow: 0 0 15px #f5d76e;
 }
 
-/* アップグレード枠 */
 .upgrade {
   margin: 20px auto;
   padding: 15px;
@@ -70,7 +65,6 @@ button:hover {
   box-shadow: 0 0 10px #f5d76e;
 }
 
-/* ガチャ結果 */
 #gachaResult {
   margin-top: 10px;
   font-size: 22px;
@@ -79,9 +73,29 @@ button:hover {
   text-shadow: 0 0 10px #f5d76e;
 }
 
-/* ランキング */
 #rankingList {
   margin-top: 20px;
   font-size: 20px;
   color: #f5d76e;
+}
+
+/* 横並びレイアウト */
+#gameContainer {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.panel {
+  width: 32%;
+  background: #111;
+  padding: 15px;
+  border: 2px solid #f5d76e;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #f5d76e;
+}
+
+#feverStatus {
+  margin-top: 10px;
+  font-size: 18px;
 }
