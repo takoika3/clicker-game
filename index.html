@@ -32,34 +32,55 @@
   <div id="gameScreen" style="display:none;">
     <h1>クリッカーゲーム</h1>
 
-    <div id="score">0</div>
-    <button id="clickBtn">クリック！</button>
+    <div id="gameContainer">
 
-    <h2>アップグレード</h2>
+      <!-- 左：クリックパネル -->
+      <div class="panel" id="clickPanel">
+        <div id="score">0</div>
+        <button id="clickBtn">クリック！</button>
 
-    <div class="upgrade">
-      <button id="upgradeClick">クリックパワー強化（必要: <span id="costClick">10</span>）</button>
-      <div>現在のクリックパワー: <span id="powerClick">1</span></div>
+        <div id="feverStatus">フィーバー：なし</div>
+      </div>
+
+      <!-- 中央：強化パネル -->
+      <div class="panel" id="upgradePanel">
+
+        <h2>アップグレード</h2>
+
+        <button id="upgradeClick">クリックパワー強化（必要: <span id="costClick">10</span>）</button>
+        <div>現在のクリックパワー: <span id="powerClick">1</span></div>
+
+        <button id="upgradeAuto">オートクリック強化（必要: <span id="costAuto">50</span>）</button>
+        <div>毎秒の自動生成: <span id="powerAuto">0</span></div>
+
+        <button id="upgradeMulti">倍率アップ（必要: <span id="costMulti">200</span>）</button>
+        <div>現在の倍率: <span id="multi">1</span>x</div>
+
+        <!-- クリティカル率強化 -->
+        <button id="upgradeCritRate">クリティカル率強化（必要: <span id="costCritRate">1000</span>）</button>
+        <div>クリティカル率: <span id="critRate">0</span>%（上限50%）</div>
+
+        <!-- クリティカル倍率強化 -->
+        <button id="upgradeCritMulti">クリティカル倍率強化（必要: <span id="costCritMulti">2000</span>）</button>
+        <div>クリティカル倍率: <span id="critMulti">2</span>x</div>
+
+      </div>
+
+      <!-- 右：ガチャ＆ランキング -->
+      <div class="panel" id="sidePanel">
+
+        <h2>ガチャ（100万ポイント）</h2>
+        <button id="gachaBtn">ガチャを引く</button>
+        <div id="gachaResult"></div>
+
+        <h2>ランキング</h2>
+        <div id="rankingList"></div>
+
+        <button id="logoutBtn">ログアウト</button>
+
+      </div>
+
     </div>
-
-    <div class="upgrade">
-      <button id="upgradeAuto">オートクリック強化（必要: <span id="costAuto">50</span>）</button>
-      <div>毎秒の自動生成: <span id="powerAuto">0</span></div>
-    </div>
-
-    <div class="upgrade">
-      <button id="upgradeMulti">倍率アップ（必要: <span id="costMulti">200</span>）</button>
-      <div>現在の倍率: <span id="multi">1</span>x</div>
-    </div>
-
-    <h2>ガチャ（100万ポイント消費）</h2>
-    <button id="gachaBtn">ガチャを引く（100万ポイント）</button>
-    <div id="gachaResult"></div>
-
-    <button id="logoutBtn">ログアウト</button>
-
-    <h2>ランキング</h2>
-    <div id="rankingList"></div>
   </div>
 
   <script src="script.js"></script>
