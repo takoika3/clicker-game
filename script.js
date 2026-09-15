@@ -122,10 +122,23 @@ let clickPower = 1;
 let autoPower = 0;
 let multi = 1;
 
+// クリティカル
+let critRate = 0;      // %
+let critMulti = 2;     // 倍
+
+// フィーバー
+let clickCount = 0;
+let feverActive = false;
+let feverEndTime = 0;
+
+// 強化コスト
 let costClick = 10;
 let costAuto = 50;
 let costMulti = 200;
+let costCritRate = 1000;
+let costCritMulti = 2000;
 
+// 要素取得
 const scoreEl = document.getElementById("score");
 const powerClickEl = document.getElementById("powerClick");
 const powerAutoEl = document.getElementById("powerAuto");
@@ -135,8 +148,15 @@ const costClickEl = document.getElementById("costClick");
 const costAutoEl = document.getElementById("costAuto");
 const costMultiEl = document.getElementById("costMulti");
 
+const critRateEl = document.getElementById("critRate");
+const critMultiEl = document.getElementById("critMulti");
+const costCritRateEl = document.getElementById("costCritRate");
+const costCritMultiEl = document.getElementById("costCritMulti");
+
+const feverStatusEl = document.getElementById("feverStatus");
+
 // ----------------------
-// セーブ読み込み（ユーザーごと）
+// セーブ読み込み
 // ----------------------
 function loadGame() {
   const user = localStorage.getItem("currentUser");
@@ -153,15 +173,20 @@ function loadGame() {
   autoPower = data.autoPower;
   multi = data.multi;
 
+  critRate = data.critRate ?? 0;
+  critMulti = data.critMulti ?? 2;
+
   costClick = data.costClick;
   costAuto = data.costAuto;
   costMulti = data.costMulti;
+  costCritRate = data.costCritRate ?? 1000;
+  costCritMulti = data.costCritMulti ?? 2000;
 
   updateDisplay();
 }
 
 // ----------------------
-// セーブ保存（ユーザーごと）
+// セーブ保存
 // ----------------------
 function saveGame() {
   const user = localStorage.getItem("currentUser");
@@ -172,9 +197,13 @@ function saveGame() {
     clickPower,
     autoPower,
     multi,
+    critRate,
+    critMulti,
     costClick,
     costAuto,
-    costMulti
+    costMulti,
+    costCritRate,
+    costCritMulti
   };
 
   localStorage.setItem("save_" + user, JSON.stringify(data));
@@ -184,20 +213,56 @@ function saveGame() {
 setInterval(saveGame, 1000);
 
 // ----------------------
-// ゲーム処理
+// フィーバー判定
 // ----------------------
-document.getElementById("clickBtn").addEventListener("click", () => {
-  score += clickPower * multi;
+function checkFever() {
+  if (!feverActive && clickCount >= 300) {
+    feverActive = true;
+    feverEndTime = Date.now() + 60000;
+    clickCount = 0;
+  }
+
+  if (feverActive && Date.now() > feverEndTime) {
+    feverActive = false;
+  }
+
+  feverStatusEl.textContent = feverActive
+    ? "フィーバー中！ ×3"
+    : "フィーバー：なし";
+}
+
+// ----------------------
+// クリック処理
+// ----------------------
+function doClick() {
+  clickCount++;
+  checkFever();
+
+  let totalMulti = multi;
+  if (feverActive) totalMulti *= 3;
+
+  let gain = clickPower * totalMulti;
+
+  if (Math.random() < critRate / 100) {
+    gain *= critMulti;
+  }
+
+  score += gain;
+
   updateRanking(localStorage.getItem("currentUser"), score);
   updateDisplay();
-});
+}
 
+document.getElementById("clickBtn").addEventListener("click", doClick);
+
+// ----------------------
+// 強化処理
+// ----------------------
 document.getElementById("upgradeClick").addEventListener("click", () => {
   if (score >= costClick) {
     score -= costClick;
     clickPower++;
     costClick = Math.floor(costClick * 1.5);
-    updateRanking(localStorage.getItem("currentUser"), score);
     updateDisplay();
   }
 });
@@ -207,7 +272,6 @@ document.getElementById("upgradeAuto").addEventListener("click", () => {
     score -= costAuto;
     autoPower++;
     costAuto = Math.floor(costAuto * 1.5);
-    updateRanking(localStorage.getItem("currentUser"), score);
     updateDisplay();
   }
 });
@@ -217,28 +281,59 @@ document.getElementById("upgradeMulti").addEventListener("click", () => {
     score -= costMulti;
     multi++;
     costMulti = Math.floor(costMulti * 2);
-    updateRanking(localStorage.getItem("currentUser"), score);
     updateDisplay();
   }
 });
 
+// クリティカル率強化
+document.getElementById("upgradeCritRate").addEventListener("click", () => {
+  if (score >= costCritRate && critRate < 50) {
+    score -= costCritRate;
+    critRate++;
+    costCritRate = Math.floor(costCritRate * 1.5);
+    updateDisplay();
+  }
+});
+
+// クリティカル倍率強化
+document.getElementById("upgradeCritMulti").addEventListener("click", () => {
+  if (score >= costCritMulti) {
+    score -= costCritMulti;
+    critMulti += 0.1;
+    costCritMulti = Math.floor(costCritMulti * 1.5);
+    updateDisplay();
+  }
+});
+
+// ----------------------
 // 自動生成
+// ----------------------
 setInterval(() => {
-  score += autoPower * multi;
+  let totalMulti = multi;
+  if (feverActive) totalMulti *= 3;
+
+  score += autoPower * totalMulti;
   updateRanking(localStorage.getItem("currentUser"), score);
   updateDisplay();
 }, 1000);
 
+// ----------------------
 // 表示更新
+// ----------------------
 function updateDisplay() {
-  scoreEl.textContent = score;
+  scoreEl.textContent = Math.floor(score);
   powerClickEl.textContent = clickPower;
   powerAutoEl.textContent = autoPower;
   multiEl.textContent = multi;
 
+  critRateEl.textContent = critRate;
+  critMultiEl.textContent = critMulti.toFixed(1);
+
   costClickEl.textContent = costClick;
   costAutoEl.textContent = costAuto;
   costMultiEl.textContent = costMulti;
+  costCritRateEl.textContent = costCritRate;
+  costCritMultiEl.textContent = costCritMulti;
 
   showRanking();
 }
@@ -254,7 +349,7 @@ function showRanking() {
 
   let html = "<ol>";
   list.forEach(([user, score]) => {
-    html += `<li>${user}: ${score}</li>`;
+    html += `<li>${user}: ${Math.floor(score)}</li>`;
   });
   html += "</ol>";
 
@@ -262,7 +357,7 @@ function showRanking() {
 }
 
 // ----------------------
-// ガチャ機能（100万ポイント消費）
+// ガチャ
 // ----------------------
 function pullGacha() {
   const user = localStorage.getItem("currentUser");
@@ -281,20 +376,13 @@ function pullGacha() {
   const roll = Math.random() * 100;
   let result;
 
-  if (roll < 40) {
-    result = 0.5;
-  } else if (roll < 70) {
-    result = 1.1;
-  } else if (roll < 90) {
-    result = 1.5;
-  } else if (roll < 99) {
-    result = 2;
-  } else {
-    result = 10;
-  }
+  if (roll < 40) result = 0.5;
+  else if (roll < 70) result = 1.1;
+  else if (roll < 90) result = 1.5;
+  else if (roll < 99) result = 2;
+  else result = 10;
 
-  // 上乗せ方式
-  multi = multi * result;
+  multi *= result;
 
   document.getElementById("gachaResult").textContent =
     `ガチャ結果：${result}倍！（現在の倍率：${multi}倍）`;
@@ -306,18 +394,16 @@ function pullGacha() {
 document.getElementById("gachaBtn").addEventListener("click", pullGacha);
 
 // ----------------------
-// スペースキーで1回だけクリック（長押し対策）
+// スペースキー（長押し対策）
 // ----------------------
 document.addEventListener("keyup", (e) => {
   if (e.code === "Space") {
-    score += clickPower * multi;
-    updateRanking(localStorage.getItem("currentUser"), score);
-    updateDisplay();
+    doClick();
   }
 });
 
 // ----------------------
-// ズーム防止（iPad連打対策）
+// ズーム防止
 // ----------------------
 document.addEventListener('touchstart', function(e) {
   if (e.touches.length > 1) {
