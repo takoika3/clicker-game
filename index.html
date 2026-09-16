@@ -8,6 +8,9 @@
 </head>
 <body>
 
+  <!-- クリティカル演出レイヤー -->
+  <div id="effectLayer"></div>
+
   <!-- 新規登録画面 -->
   <div id="signupScreen">
     <h2>新規アカウント作成</h2>
@@ -63,49 +66,11 @@
 
       </div>
 
-      <!-- 右：ガチャ＆ランキング -->
+      <!-- 右：ランキング -->
       <div class="panel" id="sidePanel">
-
-        <h2>ガチャ</h2>
-        <button id="gotoGacha">ガチャ画面へ</button>
-
         <h2>ランキング</h2>
         <div id="rankingList"></div>
-
         <button id="logoutBtn">ログアウト</button>
-
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ガチャ専用ページ -->
-  <div id="gachaScreen" style="display:none;">
-    <h1>ガチャ画面</h1>
-
-    <button id="backToGame">ゲームに戻る</button>
-
-    <div id="gachaList">
-
-      <!-- 倍率ガチャ -->
-      <div class="gachaBox">
-        <h2>倍率ガチャ（100万ポイント）</h2>
-        <button id="multiGachaBtn">倍率ガチャを引く</button>
-        <div id="multiGachaResult"></div>
-      </div>
-
-      <!-- BGMガチャ -->
-      <div class="gachaBox">
-        <h2>BGMガチャ（50万ポイント）</h2>
-        <button id="bgmGachaBtn">BGMガチャを引く</button>
-        <div id="bgmGachaResult"></div>
-      </div>
-
-      <!-- 背景ガチャ -->
-      <div class="gachaBox">
-        <h2>背景ガチャ（50万ポイント）</h2>
-        <button id="bgGachaBtn">背景ガチャを引く</button>
-        <div id="bgGachaResult"></div>
       </div>
 
     </div>
