@@ -220,15 +220,37 @@ function checkFever() {
     feverActive = true;
     feverEndTime = Date.now() + 30000; // 30秒
     clickCount = 0;
+
+    // ★ 虹色演出開始
+    document.body.classList.add("feverRainbow");
   }
 
   if (feverActive && Date.now() > feverEndTime) {
     feverActive = false;
+
+    // ★ 虹色演出終了
+    document.body.classList.remove("feverRainbow");
   }
 
   feverStatusEl.textContent = feverActive
     ? "フィーバー中！ ×3"
     : "フィーバー：なし";
+}
+
+// ----------------------
+// クリティカル演出
+// ----------------------
+function spawnCritEffect(gain) {
+  const effect = document.createElement("div");
+  effect.className = "critEffect";
+  effect.textContent = "+" + Math.floor(gain);
+
+  effect.style.left = (Math.random() * 60 + 20) + "%";
+  effect.style.top = (Math.random() * 40 + 30) + "%";
+
+  document.getElementById("effectLayer").appendChild(effect);
+
+  setTimeout(() => effect.remove(), 600);
 }
 
 // ----------------------
@@ -245,6 +267,7 @@ function doClick() {
 
   if (Math.random() < critRate / 100) {
     gain *= critMulti;
+    spawnCritEffect(gain); // ★ クリティカル演出
   }
 
   score += gain;
@@ -344,73 +367,4 @@ function updateDisplay() {
 function showRanking() {
   const ranking = loadRanking();
   const list = Object.entries(ranking)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 10);
-
-  let html = "<ol>";
-  list.forEach(([user, score]) => {
-    html += `<li>${user}: ${Math.floor(score)}</li>`;
-  });
-  html += "</ol>";
-
-  document.getElementById("rankingList").innerHTML = html;
-}
-
-// ----------------------
-// ガチャ（倍率ガチャのみ）
-// ----------------------
-function pullGacha() {
-  const user = localStorage.getItem("currentUser");
-  if (!user) {
-    document.getElementById("gachaResult").textContent = "ログインしてください";
-    return;
-  }
-
-  if (score < 1000000) {
-    document.getElementById("gachaResult").textContent = "ポイントが足りません！（100万必要）";
-    return;
-  }
-
-  score -= 1000000;
-
-  const roll = Math.random() * 100;
-  let result;
-
-  if (roll < 40) result = 0.5;
-  else if (roll < 70) result = 1.1;
-  else if (roll < 90) result = 1.5;
-  else if (roll < 99) result = 2;
-  else result = 10;
-
-  multi *= result;
-
-  document.getElementById("gachaResult").textContent =
-    `ガチャ結果：${result}倍！（現在の倍率：${multi}倍）`;
-
-  updateRanking(user, score);
-  updateDisplay();
-}
-
-document.getElementById("gachaBtn").addEventListener("click", pullGacha);
-
-// ----------------------
-// スペースキー（長押し対策）
-// ----------------------
-document.addEventListener("keyup", (e) => {
-  if (e.code === "Space") {
-    doClick();
-  }
-});
-
-// ----------------------
-// ズーム防止
-// ----------------------
-document.addEventListener('touchstart', function(e) {
-  if (e.touches.length > 1) {
-    e.preventDefault();
-  }
-}, { passive: false });
-
-document.addEventListener('gesturestart', function(e) {
-  e.preventDefault();
-});
+    .sort((a, b) => b[1
