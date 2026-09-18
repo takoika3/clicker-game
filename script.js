@@ -351,7 +351,7 @@ document.getElementById("clickPowerGachaBtn").addEventListener("click", () => {
 
   score -= costClickPowerGacha;
 
-  const results = [100, 300, 1000, 5000, 100000];
+  const results = [1, 3, 5, 10];
   const gain = results[Math.floor(Math.random() * results.length)];
 
   clickPower += gain;
