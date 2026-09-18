@@ -12,26 +12,6 @@ function saveUsers(users) {
 }
 
 // ----------------------
-// ランキング管理
-// ----------------------
-
-function loadRanking() {
-  const data = localStorage.getItem("ranking");
-  return data ? JSON.parse(data) : {};
-}
-
-function saveRanking(ranking) {
-  localStorage.setItem("ranking", JSON.stringify(ranking));
-}
-
-function updateRanking(user, score) {
-  if (!user) return;
-  const ranking = loadRanking();
-  ranking[user] = score;
-  saveRanking(ranking);
-}
-
-// ----------------------
 // 新規登録
 // ----------------------
 document.getElementById("signupBtn").addEventListener("click", () => {
@@ -216,7 +196,6 @@ function saveGame() {
   };
 
   localStorage.setItem("save_" + user, JSON.stringify(data));
-  updateRanking(user, score);
 }
 
 setInterval(saveGame, 1000);
@@ -263,10 +242,10 @@ function spawnCritEffect(gain) {
 }
 
 // ----------------------
-// クリック処理（自動クリックはカウントしない）
+// クリック処理
 // ----------------------
 function doClick() {
-  clickCount++;  // 手動クリックのみ
+  clickCount++;
   checkFever();
 
   let totalMulti = multi;
@@ -276,12 +255,11 @@ function doClick() {
 
   if (Math.random() < critRate / 100) {
     gain *= critMulti;
-    spawnCritEffect(gain); // ★ クリティカル演出
+    spawnCritEffect(gain);
   }
 
   score += gain;
 
-  updateRanking(localStorage.getItem("currentUser"), score);
   updateDisplay();
 }
 
@@ -338,14 +316,13 @@ document.getElementById("upgradeCritMulti").addEventListener("click", () => {
 });
 
 // ----------------------
-// 自動生成（フィーバーのカウントには入れない）
+// 自動生成
 // ----------------------
 setInterval(() => {
   let totalMulti = multi;
   if (feverActive) totalMulti *= 3;
 
   score += autoPower * totalMulti;
-  updateRanking(localStorage.getItem("currentUser"), score);
   updateDisplay();
 }, 1000);
 
@@ -430,26 +407,6 @@ function updateDisplay() {
   costMultiEl.textContent = costMulti;
   costCritRateEl.textContent = costCritRate;
   costCritMultiEl.textContent = costCritMulti;
-
-  showRanking();
-}
-
-// ----------------------
-// ランキング表示
-// ----------------------
-function showRanking() {
-  const ranking = loadRanking();
-  const list = Object.entries(ranking)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 10);
-
-  let html = "<ol>";
-  list.forEach(([user, score]) => {
-    html += `<li>${user}: ${Math.floor(score)}</li>`;
-  });
-  html += "</ol>";
-
-  document.getElementById("rankingList").innerHTML = html;
 }
 
 // ----------------------
