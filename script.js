@@ -130,6 +130,7 @@ let critMulti = 2;     // 倍
 let clickCount = 0;
 let feverActive = false;
 let feverEndTime = 0;
+let feverBaseTime = 30000; // 基本30秒
 
 // 強化コスト
 let costClick = 10;
@@ -137,6 +138,11 @@ let costAuto = 50;
 let costMulti = 200;
 let costCritRate = 1000;
 let costCritMulti = 2000;
+
+// ガチャコスト
+const costClickPowerGacha = 500000;
+const costAutoGacha = 1000000;
+const costFeverGacha = 2000000;
 
 // 要素取得
 const scoreEl = document.getElementById("score");
@@ -182,6 +188,8 @@ function loadGame() {
   costCritRate = data.costCritRate ?? 1000;
   costCritMulti = data.costCritMulti ?? 2000;
 
+  feverBaseTime = data.feverBaseTime ?? 30000;
+
   updateDisplay();
 }
 
@@ -203,7 +211,8 @@ function saveGame() {
     costAuto,
     costMulti,
     costCritRate,
-    costCritMulti
+    costCritMulti,
+    feverBaseTime
   };
 
   localStorage.setItem("save_" + user, JSON.stringify(data));
@@ -213,22 +222,44 @@ function saveGame() {
 setInterval(saveGame, 1000);
 
 // ----------------------
-// フィーバー判定（500クリック → 30秒）
+// フィーバー判定（500クリック → 基本30秒）
 // ----------------------
 function checkFever() {
   if (!feverActive && clickCount >= 500) {
     feverActive = true;
-    feverEndTime = Date.now() + 30000; // 30秒
+    feverEndTime = Date.now() + feverBaseTime;
     clickCount = 0;
+
+    // ★ 虹色演出開始
+    document.body.classList.add("feverRainbow");
   }
 
   if (feverActive && Date.now() > feverEndTime) {
     feverActive = false;
+
+    // ★ 虹色演出終了
+    document.body.classList.remove("feverRainbow");
   }
 
   feverStatusEl.textContent = feverActive
     ? "フィーバー中！ ×3"
     : "フィーバー：なし";
+}
+
+// ----------------------
+// クリティカル演出
+// ----------------------
+function spawnCritEffect(gain) {
+  const effect = document.createElement("div");
+  effect.className = "critEffect";
+  effect.textContent = "+" + Math.floor(gain);
+
+  effect.style.left = (Math.random() * 60 + 20) + "%";
+  effect.style.top = (Math.random() * 40 + 30) + "%";
+
+  document.getElementById("effectLayer").appendChild(effect);
+
+  setTimeout(() => effect.remove(), 600);
 }
 
 // ----------------------
@@ -245,6 +276,7 @@ function doClick() {
 
   if (Math.random() < critRate / 100) {
     gain *= critMulti;
+    spawnCritEffect(gain); // ★ クリティカル演出
   }
 
   score += gain;
@@ -318,6 +350,70 @@ setInterval(() => {
 }, 1000);
 
 // ----------------------
+// ガチャ：クリックパワー
+// ----------------------
+document.getElementById("clickPowerGachaBtn").addEventListener("click", () => {
+  if (score < costClickPowerGacha) {
+    document.getElementById("clickPowerGachaResult").textContent = "ポイント不足（50万必要）";
+    return;
+  }
+
+  score -= costClickPowerGacha;
+
+  const results = [1, 3, 10, 50];
+  const gain = results[Math.floor(Math.random() * results.length)];
+
+  clickPower += gain;
+
+  document.getElementById("clickPowerGachaResult").textContent =
+    `結果：クリックパワー +${gain}`;
+
+  updateDisplay();
+});
+
+// ----------------------
+// ガチャ：オートクリック
+// ----------------------
+document.getElementById("autoGachaBtn").addEventListener("click", () => {
+  if (score < costAutoGacha) {
+    document.getElementById("autoGachaResult").textContent = "ポイント不足（100万必要）";
+    return;
+  }
+
+  score -= costAutoGacha;
+
+  const results = [1, 5, 20, 100];
+  const gain = results[Math.floor(Math.random() * results.length)];
+
+  autoPower += gain;
+
+  document.getElementById("autoGachaResult").textContent =
+    `結果：オートクリック +${gain}`;
+
+  updateDisplay();
+});
+
+// ----------------------
+// ガチャ：フィーバー延長（ランダム +5〜+30秒）
+// ----------------------
+document.getElementById("feverGachaBtn").addEventListener("click", () => {
+  if (score < costFeverGacha) {
+    document.getElementById("feverGachaResult").textContent = "ポイント不足（200万必要）";
+    return;
+  }
+
+  score -= costFeverGacha;
+
+  const gain = Math.floor(Math.random() * 26) + 5; // 5〜30秒
+  feverBaseTime += gain * 1000;
+
+  document.getElementById("feverGachaResult").textContent =
+    `結果：フィーバー時間 +${gain}秒`;
+
+  updateDisplay();
+});
+
+// ----------------------
 // 表示更新
 // ----------------------
 function updateDisplay() {
@@ -355,43 +451,6 @@ function showRanking() {
 
   document.getElementById("rankingList").innerHTML = html;
 }
-
-// ----------------------
-// ガチャ（倍率ガチャのみ）
-// ----------------------
-function pullGacha() {
-  const user = localStorage.getItem("currentUser");
-  if (!user) {
-    document.getElementById("gachaResult").textContent = "ログインしてください";
-    return;
-  }
-
-  if (score < 1000000) {
-    document.getElementById("gachaResult").textContent = "ポイントが足りません！（100万必要）";
-    return;
-  }
-
-  score -= 1000000;
-
-  const roll = Math.random() * 100;
-  let result;
-
-  if (roll < 40) result = 0.5;
-  else if (roll < 70) result = 1.1;
-  else if (roll < 90) result = 1.5;
-  else if (roll < 99) result = 2;
-  else result = 10;
-
-  multi *= result;
-
-  document.getElementById("gachaResult").textContent =
-    `ガチャ結果：${result}倍！（現在の倍率：${multi}倍）`;
-
-  updateRanking(user, score);
-  updateDisplay();
-}
-
-document.getElementById("gachaBtn").addEventListener("click", pullGacha);
 
 // ----------------------
 // スペースキー（長押し対策）
