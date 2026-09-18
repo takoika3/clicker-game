@@ -75,6 +75,19 @@ button:hover {
   font-size: 18px;
 }
 
+/* クリックボタン（大型化） */
+#clickBtn {
+  padding: 30px 60px;      /* ← ボタンを大きく */
+  font-size: 32px;         /* ← 文字も大きく */
+  border-radius: 20px;     /* ← 角を丸く */
+  background: linear-gradient(135deg, #f5d76e, #c9a43b);
+  border: none;
+  color: #000;
+  font-weight: bold;
+  box-shadow: 0 0 20px #f5d76e;
+  transition: 0.2s;
+}
+
 /* クリティカル演出レイヤー */
 #effectLayer {
   position: fixed;
