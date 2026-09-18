@@ -142,6 +142,23 @@ const costCritMultiEl = document.getElementById("costCritMulti");
 const feverStatusEl = document.getElementById("feverStatus");
 
 // ----------------------
+// 数字短縮表記
+// ----------------------
+function formatNumber(num) {
+  if (num < 1000) return num;
+
+  const units = ["K", "M", "B", "T", "aa", "ab", "ac", "ad", "ae"];
+  let unitIndex = -1;
+
+  while (num >= 1000 && unitIndex < units.length - 1) {
+    num /= 1000;
+    unitIndex++;
+  }
+
+  return num.toFixed(2) + units[unitIndex];
+}
+
+// ----------------------
 // セーブ読み込み
 // ----------------------
 function loadGame() {
@@ -201,7 +218,7 @@ function saveGame() {
 setInterval(saveGame, 1000);
 
 // ----------------------
-// フィーバー判定（500クリック → 基本30秒）
+// フィーバー判定
 // ----------------------
 function checkFever() {
   if (!feverActive && clickCount >= 500) {
@@ -209,14 +226,11 @@ function checkFever() {
     feverEndTime = Date.now() + feverBaseTime;
     clickCount = 0;
 
-    // ★ 虹色演出開始
     document.body.classList.add("feverRainbow");
   }
 
   if (feverActive && Date.now() > feverEndTime) {
     feverActive = false;
-
-    // ★ 虹色演出終了
     document.body.classList.remove("feverRainbow");
   }
 
@@ -391,22 +405,22 @@ document.getElementById("feverGachaBtn").addEventListener("click", () => {
 });
 
 // ----------------------
-// 表示更新
+// 表示更新（短縮表記版）
 // ----------------------
 function updateDisplay() {
-  scoreEl.textContent = Math.floor(score);
-  powerClickEl.textContent = clickPower;
-  powerAutoEl.textContent = autoPower;
-  multiEl.textContent = multi;
+  scoreEl.textContent = formatNumber(score);
+  powerClickEl.textContent = formatNumber(clickPower);
+  powerAutoEl.textContent = formatNumber(autoPower);
+  multiEl.textContent = formatNumber(multi);
 
   critRateEl.textContent = critRate;
   critMultiEl.textContent = critMulti.toFixed(1);
 
-  costClickEl.textContent = costClick;
-  costAutoEl.textContent = costAuto;
-  costMultiEl.textContent = costMulti;
-  costCritRateEl.textContent = costCritRate;
-  costCritMultiEl.textContent = costCritMulti;
+  costClickEl.textContent = formatNumber(costClick);
+  costAutoEl.textContent = formatNumber(costAuto);
+  costMultiEl.textContent = formatNumber(costMulti);
+  costCritRateEl.textContent = formatNumber(costCritRate);
+  costCritMultiEl.textContent = formatNumber(costCritMulti);
 }
 
 // ----------------------
