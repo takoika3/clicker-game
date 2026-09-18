@@ -345,7 +345,7 @@ setInterval(() => {
 // ----------------------
 document.getElementById("clickPowerGachaBtn").addEventListener("click", () => {
   if (score < costClickPowerGacha) {
-    document.getElementById("clickPowerGachaResult").textContent = "ポイント不足（50万必要）";
+    document.getElementById("clickPowerGachaResult").textContent = "ポイント不足（1000万必要）";
     return;
   }
 
@@ -367,7 +367,7 @@ document.getElementById("clickPowerGachaBtn").addEventListener("click", () => {
 // ----------------------
 document.getElementById("autoGachaBtn").addEventListener("click", () => {
   if (score < costAutoGacha) {
-    document.getElementById("autoGachaResult").textContent = "ポイント不足（100万必要）";
+    document.getElementById("autoGachaResult").textContent = "ポイント不足（5000万必要）";
     return;
   }
 
@@ -389,7 +389,7 @@ document.getElementById("autoGachaBtn").addEventListener("click", () => {
 // ----------------------
 document.getElementById("feverGachaBtn").addEventListener("click", () => {
   if (score < costFeverGacha) {
-    document.getElementById("feverGachaResult").textContent = "ポイント不足（200万必要）";
+    document.getElementById("feverGachaResult").textContent = "ポイント不足（3000万必要）";
     return;
   }
 
