@@ -120,9 +120,9 @@ let costCritRate = 1000;
 let costCritMulti = 2000;
 
 // ガチャコスト
-const costClickPowerGacha = 500000;
-const costAutoGacha = 1000000;
-const costFeverGacha = 2000000;
+const costClickPowerGacha = 50000000000;
+const costAutoGacha = 100000000000;
+const costFeverGacha = 20000000000;
 
 // 要素取得
 const scoreEl = document.getElementById("score");
