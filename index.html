@@ -1,0 +1,654 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>星剣と魔導書のクロニクル</title>
+
+  <!-- デザイン用CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- 星空背景 -->
+  <div class="stars"></div>
+
+  <main class="app">
+
+    <!-- =========================
+         上部タイトル
+    ========================== -->
+    <header class="top">
+
+      <div>
+        <small>ASTRAL IDLE RPG</small>
+        <h1>星剣と魔導書のクロニクル</h1>
+      </div>
+
+      <div class="wallet">
+
+        <span>
+          ⚔️
+          <b id="power">0</b>
+        </span>
+
+        <span>
+          🪙
+          <b id="gold">0</b>
+        </span>
+
+        <span>
+          💎
+          <b id="crystal">0</b>
+        </span>
+
+        <span>
+          🌟
+          <b id="soul">0</b>
+        </span>
+
+      </div>
+
+    </header>
+
+
+    <!-- =========================
+         プレイヤー情報
+    ========================== -->
+    <section class="hero">
+
+      <div>
+
+        <small>現在地</small>
+
+        <h2 id="area">
+          第1章 星界への道
+        </h2>
+
+        <div class="bar">
+          <i id="xpbar"></i>
+        </div>
+
+        <p>
+          Lv.
+          <b id="lv">1</b>
+
+          EXP
+
+          <span id="xp">0</span>
+          /
+          <span id="xpneed">100</span>
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         メニュー
+    ========================== -->
+    <nav>
+
+      <button
+        data-tab="adventure"
+        class="active"
+      >
+        ⚔️ 冒険
+      </button>
+
+      <button data-tab="tree">
+        🌌 星魂盤
+      </button>
+
+      <button data-tab="gacha">
+        🔮 召喚
+      </button>
+
+      <button data-tab="rebirth">
+        ♾️ 転生
+      </button>
+
+    </nav>
+
+
+    <!-- =========================
+         冒険画面
+    ========================== -->
+    <section
+      id="adventure"
+      class="tab active"
+    >
+
+      <div class="grid">
+
+
+        <!-- ボス戦 -->
+        <article class="panel battle">
+
+          <span class="eyebrow">
+            BOSS ENCOUNTER
+          </span>
+
+          <div class="monster">
+            👹
+          </div>
+
+          <h2>
+            混沌の守護者
+          </h2>
+
+          <p>
+            STAGE
+            <b id="stage">1</b>
+          </p>
+
+
+          <!-- 敵HP -->
+          <div class="bar enemybar">
+            <i id="hpbar"></i>
+          </div>
+
+          <small>
+            HP
+            <span id="hp">-</span>
+            /
+            <span id="maxhp">-</span>
+          </small>
+
+
+          <!-- 戦闘ログ -->
+          <div
+            id="log"
+            class="log"
+          >
+          </div>
+
+
+          <!-- 戦闘開始 -->
+          <button
+            id="fight"
+            class="primary"
+          >
+            ⚔️ 戦闘開始
+          </button>
+
+        </article>
+
+
+
+        <!-- =====================
+             冒険者
+        ====================== -->
+        <article class="panel">
+
+          <h3>
+            🧙 冒険者
+          </h3>
+
+
+          <!-- 職業 -->
+          <div
+            id="jobs"
+            class="jobs"
+          >
+          </div>
+
+
+          <!-- ステータス -->
+          <div class="statgrid">
+
+            <div>
+              HP
+              <b id="playerHp">
+                0
+              </b>
+            </div>
+
+            <div>
+              ATK
+              <b id="atk">
+                0
+              </b>
+            </div>
+
+            <div>
+              DEF
+              <b id="def">
+                0
+              </b>
+            </div>
+
+          </div>
+
+
+          <h3>
+            ✨ スキルローテーション
+          </h3>
+
+          <p class="muted">
+            スキルを選択すると
+            次のスキルと場所を交換できます。
+          </p>
+
+
+          <!-- スキル -->
+          <div
+            id="skills"
+            class="skills"
+          >
+          </div>
+
+        </article>
+
+
+
+        <!-- =====================
+             育成
+        ====================== -->
+        <article class="panel">
+
+          <h3>
+            🎒 育成
+          </h3>
+
+
+          <!-- 攻撃強化 -->
+          <button id="train">
+
+            ⚔️ 攻撃強化
+
+            <span id="trainCost">
+              50
+            </span>
+
+            🪙
+
+          </button>
+
+
+          <!-- 防御強化 -->
+          <button id="armor">
+
+            🛡️ 防御強化
+
+            <span id="armorCost">
+              50
+            </span>
+
+            🪙
+
+          </button>
+
+
+
+          <h3>
+            🌙 放置報酬
+          </h3>
+
+          <div class="reward">
+
+            🌙
+
+            <b id="offlineGold">
+              0
+            </b>
+
+            🪙
+
+          </div>
+
+
+          <button
+            id="claim"
+            class="primary"
+          >
+            放置報酬を回収
+          </button>
+
+
+
+          <h3>
+            🧿 装備ボーナス
+          </h3>
+
+          <div id="gear">
+            装備なし
+          </div>
+
+        </article>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         星魂スキルツリー
+    ========================== -->
+    <section
+      id="tree"
+      class="tab"
+    >
+
+      <article class="panel treePanel">
+
+
+        <!-- ツリー上部 -->
+        <div class="treeHead">
+
+          <div>
+
+            <span class="eyebrow">
+              ASTRAL CONSTELLATION
+            </span>
+
+            <h2>
+              🌌 星魂スキルツリー
+            </h2>
+
+            <p class="muted">
+              闘争・守護・運命を組み合わせて
+              自分だけの転生ビルドを作ろう
+            </p>
+
+          </div>
+
+
+          <div>
+
+            <b>
+              所持 🌟
+              <span id="treeSoul">
+                0
+              </span>
+            </b>
+
+            <br>
+
+            <button
+              id="resetTree"
+              class="ghost"
+            >
+              🔄 ツリー初期化
+            </button>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- 系統説明 -->
+        <div class="legend">
+
+          <span class="war">
+            ● 闘争
+          </span>
+
+          <span class="guard">
+            ● 守護
+          </span>
+
+          <span class="fate">
+            ● 運命
+          </span>
+
+          <span>
+            ◆ 最大ランク
+          </span>
+
+        </div>
+
+
+
+        <!--
+          JavaScriptによって
+          スキルツリーがここに生成されます
+        -->
+        <div
+          id="treeBoard"
+          class="treeBoard"
+        >
+        </div>
+
+
+
+        <!-- 選択中のノード -->
+        <aside
+          id="nodeDetail"
+          class="nodeDetail"
+        >
+
+          <p>
+            ノードを選択すると
+            詳細を表示します。
+          </p>
+
+        </aside>
+
+
+      </article>
+
+    </section>
+
+
+
+    <!-- =========================
+         ガチャ
+    ========================== -->
+    <section
+      id="gacha"
+      class="tab"
+    >
+
+      <article class="panel summon">
+
+        <span class="eyebrow">
+          CELESTIAL SUMMON
+        </span>
+
+        <h2>
+          🔮 星界召喚
+        </h2>
+
+
+        <div class="orb">
+          ✦
+        </div>
+
+
+        <p>
+          装備または秘奥スキルを召喚。
+        </p>
+
+        <p>
+          10連召喚では
+          SR以上が1つ確定します。
+        </p>
+
+
+        <div class="actions">
+
+          <button
+            id="pull1"
+            class="primary"
+          >
+            🔮 1回召喚
+            100💎
+          </button>
+
+
+          <button
+            id="pull10"
+            class="gold"
+          >
+            ✨ 10回召喚
+            900💎
+          </button>
+
+        </div>
+
+
+
+        <!-- ガチャ結果 -->
+        <div
+          id="results"
+          class="results"
+        >
+        </div>
+
+
+        <h3>
+          📖 召喚記録
+        </h3>
+
+
+        <div
+          id="inventory"
+          class="results"
+        >
+        </div>
+
+      </article>
+
+    </section>
+
+
+
+    <!-- =========================
+         転生
+    ========================== -->
+    <section
+      id="rebirth"
+      class="tab"
+    >
+
+      <article class="panel rebirth">
+
+        <span class="eyebrow">
+          REINCARNATION
+        </span>
+
+
+        <h2>
+          ♾️ 転生の祭壇
+        </h2>
+
+
+        <div class="orb">
+          ♾
+        </div>
+
+
+        <p>
+          STAGE 10以降で転生できます。
+        </p>
+
+        <p>
+          転生すると一部の成長を失う代わりに、
+          星魂と恒久的な能力を獲得します。
+        </p>
+
+
+
+        <div class="statgrid">
+
+
+          <!-- 転生回数 -->
+          <div>
+
+            転生回数
+
+            <b id="rebirths">
+              0
+            </b>
+
+          </div>
+
+
+          <!-- 永久倍率 -->
+          <div>
+
+            永久倍率
+
+            <b id="perm">
+              1.00
+            </b>
+
+          </div>
+
+
+          <!-- 獲得予定星魂 -->
+          <div>
+
+            獲得予定
+
+            <b>
+
+              <span id="gainSoul">
+                0
+              </span>
+
+              🌟
+
+            </b>
+
+          </div>
+
+
+        </div>
+
+
+        <button
+          id="doRebirth"
+          class="gold"
+        >
+          🌠 転生する
+        </button>
+
+
+      </article>
+
+    </section>
+
+
+
+    <!-- =========================
+         セーブ初期化
+    ========================== -->
+    <footer>
+
+      <button
+        id="reset"
+        class="danger"
+      >
+        🗑️ セーブデータを初期化
+      </button>
+
+    </footer>
+
+
+  </main>
+
+
+  <!-- 通知 -->
+  <div id="toast"></div>
+
+
+  <!--
+    ゲーム本体のJavaScript
+
+    game.jsは次の手順で作ります。
+  -->
+  <script src="game.js"></script>
+
+</body>
+</html>
