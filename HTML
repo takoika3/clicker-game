@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>キノコ伝説風 放置RPG</title>
+<style>
+body{
+    background:#222;
+    color:white;
+    font-family:sans-serif;
+    text-align:center;
+}
+button{
+    padding:10px;
+    margin:5px;
+}
+.panel{
+    background:#333;
+    margin:10px auto;
+    padding:10px;
+    width:500px;
+    border-radius:10px;
+}
+</style>
+</head>
+<body>
+
+<h1>🍄 放置RPG</h1>
+
+<div class="panel">
+    <h3>プレイヤー</h3>
+    LV:<span id="lv">1</span><br>
+    攻撃力:<span id="atk">10</span><br>
+    Gold:<span id="gold">0</span><br>
+    転生回数:<span id="rebirth">0</span><br>
+</div>
+
+<div class="panel">
+    <h3>敵</h3>
+    HP:<span id="enemyHp">100</span>
+</div>
+
+<div class="panel">
+    <button onclick="gacha()">ガチャ(100G)</button>
+    <button onclick="skillAtk()">攻撃UP(1SP)</button>
+    <button onclick="rebirth()">転生</button>
+
+    <br><br>
+
+    ガチャ武器:
+    <span id="weapon">なし</span>
+
+    <br>
+
+    スキルP:
+    <span id="sp">0</span>
+</div>
+
+<div id="log"></div>
+
+<script>
+
+let player={
+    level:1,
+    atk:10,
+    gold:0,
+    sp:0,
+    rebirth:0,
+    bonus:1
+};
+
+let enemy={
+    hp:100,
+    maxHp:100
+};
+
+const weapons=[
+    {name:"木の棒",atk:5,rate:60},
+    {name:"鉄の剣",atk:15,rate:30},
+    {name:"伝説のキノコ剣",atk:50,rate:10}
+];
+
+function updateUI(){
+    lv.textContent=player.level;
+    atk.textContent=Math.floor(player.atk);
+    gold.textContent=player.gold;
+    rebirth.textContent=player.rebirth;
+    enemyHp.textContent=Math.floor(enemy.hp);
+    sp.textContent=player.sp;
+}
+
+function log(msg){
+    document.getElementById("log").innerHTML=
+    msg+"<br>"+document.getElementById("log").innerHTML;
+}
+
+function battle(){
+
+    enemy.hp-=player.atk;
+
+    if(enemy.hp<=0){
+
+        let reward=20+player.level*5;
+
+        player.gold+=reward;
+        player.level++;
+
+        if(player.level%5===0){
+            player.sp++;
+        }
+
+        enemy.maxHp*=1.15;
+        enemy.hp=enemy.maxHp;
+
+        log("敵撃破！ +" + reward + "G");
+    }
+
+    updateUI();
+}
+
+setInterval(battle,1000);
+
+function gacha(){
+
+    if(player.gold<100){
+        log("ゴールド不足");
+        return;
+    }
+
+    player.gold-=100;
+
+    let rand=Math.random()*100;
+    let sum=0;
+
+    for(let w of weapons){
+
+        sum+=w.rate;
+
+        if(rand<=sum){
+
+            player.atk+=w.atk;
+
+            document.getElementById("weapon").textContent=w.name;
+
+            log("ガチャ獲得: "+w.name);
+            break;
+        }
+    }
+
+    updateUI();
+}
+
+function skillAtk(){
+
+    if(player.sp<=0) return;
+
+    player.sp--;
+    player.atk*=1.2;
+
+    updateUI();
+
+    log("攻撃スキル取得");
+}
+
+function rebirth(){
+
+    if(player.level<50){
+
+        log("Lv50で転生可能");
+        return;
+    }
+
+    player.rebirth++;
+
+    player.level=1;
+    player.gold=0;
+    player.sp=0;
+
+    player.atk=
+        10+
+        player.rebirth*5;
+
+    player.atk*=1+player.rebirth*0.2;
+
+    enemy.hp=100;
+    enemy.maxHp=100;
+
+    log("転生しました！");
+    updateUI();
+}
+
+updateUI();
+
+</script>
+
+</body>
+</html>
