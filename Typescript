@@ -1,0 +1,418 @@
+import { create } from "zustand";
+
+export interface Equipment {
+  id: number;
+  name: string;
+  rarity: string;
+  attack: number;
+}
+
+export interface Pet {
+  id: number;
+  name: string;
+  attack: number;
+  magic: number;
+}
+
+export interface Enemy {
+  name: string;
+  hp: number;
+  maxHp: number;
+  expReward: number;
+  goldReward: number;
+}
+
+export interface Player {
+  level: number;
+  exp: number;
+
+  hp: number;
+  maxHp: number;
+
+  attack: number;
+  magic: number;
+
+  crit: number;
+
+  gold: number;
+
+  floor: number;
+
+  rebirths: number;
+
+  skillPoints: number;
+
+  title: string;
+
+  job: "warrior" | "mage";
+
+  inventory: Equipment[];
+
+  equippedWeapon: Equipment | null;
+
+  pet: Pet | null;
+
+  achievements: string[];
+
+  autoRebirth: boolean;
+}
+
+interface GameStore {
+  player: Player;
+  enemy: Enemy;
+
+  attackEnemy: () => void;
+
+  chooseJob: (
+    job: "warrior" | "mage"
+  ) => void;
+
+  rebirth: () => void;
+
+  addEquipment: (
+    item: Equipment
+  ) => void;
+
+  equipItem: (
+    item: Equipment
+  ) => void;
+
+  equipPet: (
+    pet: Pet
+  ) => void;
+
+  nextFloor: () => void;
+
+  saveGame: () => void;
+
+  loadGame: () => void;
+}
+
+const createEnemy = (
+  floor: number
+): Enemy => {
+
+  const boss =
+    floor % 10 === 0;
+
+  return {
+    name: boss
+      ? `ボス ${floor}`
+      : `敵 ${floor}`,
+
+    hp: boss
+      ? floor * 500
+      : floor * 50,
+
+    maxHp: boss
+      ? floor * 500
+      : floor * 50,
+
+    expReward:
+      floor * 10,
+
+    goldReward:
+      floor * 5
+  };
+};
+
+export const useGameStore =
+create<GameStore>((set, get) => ({
+
+  player: {
+
+    level: 1,
+    exp: 0,
+
+    hp: 100,
+    maxHp: 100,
+
+    attack: 10,
+    magic: 5,
+
+    crit: 5,
+
+    gold: 0,
+
+    floor: 1,
+
+    rebirths: 0,
+
+    skillPoints: 0,
+
+    title: "初心者",
+
+    job: "warrior",
+
+    inventory: [],
+
+    equippedWeapon: null,
+
+    pet: null,
+
+    achievements: [],
+
+    autoRebirth: false
+  },
+
+  enemy: createEnemy(1),
+
+  attackEnemy: () => {
+
+    const state = get();
+
+    const player = {
+      ...state.player
+    };
+
+    const enemy = {
+      ...state.enemy
+    };
+
+    const petAtk =
+      player.pet?.attack || 0;
+
+    const petMagic =
+      player.pet?.magic || 0;
+
+    let damage =
+      player.attack +
+      petAtk +
+      (player.magic + petMagic) * 0.5;
+
+    const critical =
+      Math.random() * 100 <
+      player.crit;
+
+    if (critical) {
+      damage *= 2;
+    }
+
+    enemy.hp -= damage;
+
+    if (enemy.hp <= 0) {
+
+      player.exp +=
+        enemy.expReward;
+
+      player.gold +=
+        enemy.goldReward;
+
+      while (
+        player.exp >= 100
+      ) {
+
+        player.exp -= 100;
+
+        player.level++;
+
+        player.skillPoints++;
+
+        player.attack += 2;
+
+        player.magic += 2;
+
+        player.maxHp += 10;
+      }
+
+      player.floor++;
+
+      if (
+        player.level >= 10 &&
+        !player.achievements.includes(
+          "lv10"
+        )
+      ) {
+        player.achievements.push(
+          "lv10"
+        );
+      }
+
+      if (
+        player.floor >= 100 &&
+        !player.achievements.includes(
+          "floor100"
+        )
+      ) {
+        player.achievements.push(
+          "floor100"
+        );
+      }
+
+      set({
+        player,
+        enemy:
+          createEnemy(
+            player.floor
+          )
+      });
+
+      return;
+    }
+
+    set({ enemy });
+  },
+
+  chooseJob: (job) => {
+
+    set((state) => ({
+
+      player: {
+
+        ...state.player,
+
+        job,
+
+        attack:
+          job === "warrior"
+            ? state.player.attack + 20
+            : state.player.attack,
+
+        magic:
+          job === "mage"
+            ? state.player.magic + 20
+            : state.player.magic
+      }
+
+    }));
+  },
+
+  rebirth: () => {
+
+    const state = get();
+
+    if (
+      state.player.level < 50
+    ) {
+      return;
+    }
+
+    const bonus =
+      state.player.rebirths + 1;
+
+    set({
+
+      player: {
+
+        ...state.player,
+
+        level: 1,
+
+        exp: 0,
+
+        floor: 1,
+
+        attack:
+          10 + bonus * 5,
+
+        magic:
+          5 + bonus * 5,
+
+        rebirths: bonus
+      },
+
+      enemy: createEnemy(1)
+    });
+  },
+
+  addEquipment: (
+    equipment
+  ) => {
+
+    set((state) => ({
+
+      player: {
+
+        ...state.player,
+
+        inventory: [
+          ...state.player.inventory,
+          equipment
+        ]
+      }
+
+    }));
+  },
+
+  equipItem: (
+    item
+  ) => {
+
+    set((state) => ({
+
+      player: {
+
+        ...state.player,
+
+        equippedWeapon:
+          item,
+
+        attack:
+          state.player.attack +
+          item.attack
+      }
+
+    }));
+  },
+
+  equipPet: (
+    pet
+  ) => {
+
+    set((state) => ({
+
+      player: {
+
+        ...state.player,
+
+        pet
+      }
+
+    }));
+  },
+
+  nextFloor: () => {
+
+    set((state) => ({
+
+      player: {
+
+        ...state.player,
+
+        floor:
+          state.player.floor + 1
+      }
+
+    }));
+  },
+
+  saveGame: () => {
+
+    localStorage.setItem(
+
+      "idle-rpg-save",
+
+      JSON.stringify(
+        get()
+      )
+    );
+  },
+
+  loadGame: () => {
+
+    const save =
+      localStorage.getItem(
+        "idle-rpg-save"
+      );
+
+    if (!save) {
+      return;
+    }
+
+    const data =
+      JSON.parse(save);
+
+    set(data);
+  }
+
+}));
